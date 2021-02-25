@@ -1,69 +1,129 @@
 <?php
 class CreatOp{
-    private $n;
-    private $number_a;
-    private $number_b;
-    
-    function CreatOp($ao,$bo,$o){
-        $this->number_a = $ao;
-        $this->number_b = $bo;
-        $cf = rand(1,10);
-        switch($o)
-        {
-            case 0:
-                $oet = 1;
-                $res = $ao+$bo;
-                $b = $ao+$bo-$cf;
-                $c = $ao+$bo-$cf+2;
-                $d = $ao+$bo+$cf;
-              
-                            
-                break;
-            case 1:
-                $oet = 2;
-                $res = $ao-$bo;
-                $b = $ao-$bo-$cf;
-                $c = $ao-$bo-$cf-1;
-                $d = $ao-$bo+$cf+1;
-                          
-                break;
-            case 2:
-                $oet = 3;
-                $res = $ao*$bo;
-                $b = $ao*$bo-$cf;
-                $c = $ao*$bo-$cf-1;
-                $d = $ao*$bo+$cf+1;
-                
-                          
-                break;
-        }
-        $n = array("<button id='$res' onclick='addsum($ao, $bo, $res, $oet)'>".number_format($res,0,",",".")."</button>",
-        "<button id='$b' onclick='addsum($ao, $bo, $b,$oet)'>".number_format($b,0,",",".")."</button>",
-        "<button id='$c' onclick='addsum($ao, $bo, $c,$oet)'>".number_format($c,0,",",".")."</button>",
-        "<button id='$d' onclick='addsum($ao, $bo, $d,$oet)'>".number_format($d,0,",",".")."</button>");
-        $this->n = $n;
+    function createOperetionUnic(int $qnt, string $operation){
+        $quest = array();
+        for($ct=0; $ct <= $qnt; $ct++){
+            array_push($quest,$this->crtArrayOps($ct, $operation));
+        }        
+        return $quest;
     }
-    function Show($op){
-        switch($op){
-            case 0:
-                $opet = " + ";
+    function creatEverEqual($qnt){
+        $oper = array(
+            1 => "+",
+            2 => "-",
+            3 => "*",
+            4 => "/"
+        );
+        $quest = array();
+        for($ct=0; $ct <= $qnt; $ct++){
+            array_push($quest,$this->crtArrayOps($ct, $oper[rand(1,3)]));
+        }        
+        return $quest;
+    }
+    function crtArrayOps($ct, $operation){
+        $valueA = rand(1,100);
+        $valueB = rand(1,100);
+        switch($operation){
+            case "+":
+                $operationName = "Addition";
+                $result = $this->calcAddition($valueA,$valueB);
             break;
-            case 1:
-                $opet = " - ";
+            case "-":
+                $operationName = "Subtraction";
+                $result = $this->calcSubtraction($valueA,$valueB);
             break;
-            case 2:
-                $opet = " x ";
+            case "*":
+                $operationName = "Multiplication";
+                $result = $this->calcMultiplication($valueA,$valueB);
             break;
-        }
-        $ts = array(0,1,2,3);
-        shuffle($ts);
+            case "/":
+                $operationName = "Division";
+                $result = $this->calcDivision($valueA,$valueB);
+            break;
+        };
         
-        echo "<p>$this->number_a $opet $this->number_b<p>";
-        echo "<p>".$this->n[$ts[0]]."</p>";
-        echo "<p>".$this->n[$ts[1]]."</p>";
-        echo "<p>".$this->n[$ts[2]]."</p>";
-        echo "<p>".$this->n[$ts[3]]."</p>";
+            $questa = array(
+                $ct => array(
+                    "ValueA" => $valueA,
+                    "ValueB" => $valueB,
+                    "Operation" => $operation,
+                    "OperatinName" => $operationName,
+                    "Options" => $result
+                )
+            );
+            return $questa;
+    }
+
+    function calcAddition($vA, $vB){
+        $opA = $vA + $vB;
+        return $this->grOptions($opA,0);    
     }
     
-    
+    function calcSubtraction($vA, $vB){
+         $opA = $vA - $vB;
+        return $this->grOptions($opA,0);        
+    }
+    function calcMultiplication($vA, $vB){
+        $opA = $vA * $vB;
+        return $this->grOptions($opA,0);   
+    }
+    function calcDivision($vA,$vB){
+        $opA = $vA / $vB;
+        return $this->grOptions($opA,2);   
+    }
+
+    private function grOptions($opA,$csD){
+        $op = rand (1,4);
+        switch($op){
+            case 1:
+                $opB = $opA + rand(2,5);
+                $opC = $opA - rand(2,5);
+                $opD = $opA + rand(6,10);
+                $options = array(
+                    "First" => number_format($opB,$csD,',','.'),
+                    "Second" => number_format($opA,$csD,',','.'),
+                    "Third" => number_format($opC,$csD,',','.'),
+                    "Fourth" => number_format($opD,$csD,',','.'),
+                    "Result" => "Second"
+                );
+            break;
+            case 2:
+                $opB = $opA + rand(1,3);
+                $opC = $opA - rand(1,3);
+                $opD = $opA + rand(4,10);
+                $options = array(
+                    "First" => number_format($opA,$csD,',','.'),
+                    "Second" => number_format($opD,$csD,',','.'),
+                    "Third" => number_format($opC,$csD,',','.'),
+                    "Fourth" => number_format($opB,$csD,',','.'),
+                    "Result" => "First"
+                );
+            break;
+            case 3:
+                $opB = $opA - rand(1,10);
+                $opC = $opA + rand(1,3);
+                $opD = $opA + rand(4,10);
+                $options = array(
+                    "First" => number_format($opC,$csD,',','.'),
+                    "Second" => number_format($opB,$csD,',','.'),
+                    "Third" => number_format($opA,$csD,',','.'),
+                    "Fourth" => number_format($opD,$csD,',','.'),
+                    "Result" => "Third"
+                );
+            break;
+            case 4:
+                $opB = $opA + rand(1,3);
+                $opC = $opA - rand(1,2);
+                $opD = $opA + rand(4,10);
+                $options = array(
+                    "First" => number_format($opD,$csD,',','.'),
+                    "Second" => number_format($opC,$csD,',','.'),
+                    "Third" => number_format($opB,$csD,',','.'),
+                    "Fourth" => number_format($opA,$csD,',','.'),
+                    "Result" => "Fourth"
+                );
+            break;
+        };
+        return $options;   
+    }    
 }
