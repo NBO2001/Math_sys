@@ -1,13 +1,41 @@
 <?php
 class CreatOp{
+    //Variable
+    private $intervaloA;
+    private $intervaloB;
+
+    //Constructor
+    function CreatOp(int $inta, int $intab){
+        $this->intervaloA = $inta;
+        $this->intervaloB = $intab;
+    }
+
+    //Generates the values 
+    function valueGenerator(){
+        $val = rand($this->intervaloA, $this->intervaloB);
+        return $val;
+    }
+    // Recebe a quantidade de equações e a opeção, e retorna um array.
     function createOperetionUnic(int $qnt, string $operation){
         $quest = array();
-        for($ct=0; $ct <= $qnt; $ct++){
+        for($ct=0; $ct < $qnt; $ct++){
             array_push($quest,$this->crtArrayOps($ct, $operation));
         }        
         return $quest;
     }
-    function creatEverEqual($qnt){
+    //Gera com especificações
+    function createdFromAnArray(array $conf){
+        $quest = array();
+        $ctn = 0;
+        foreach ($conf as $operation => $qnt){
+            for($a=0; $a < $qnt; $a++){
+                array_push($quest, $this->crtArrayOps($ctn,"$operation"));
+            }
+        }
+        return $quest;
+    }
+    //Gera com todas as operações.
+    function creatEverEqual(int $qnt){
         $oper = array(
             1 => "+",
             2 => "-",
@@ -15,14 +43,14 @@ class CreatOp{
             4 => "/"
         );
         $quest = array();
-        for($ct=0; $ct <= $qnt; $ct++){
-            array_push($quest,$this->crtArrayOps($ct, $oper[rand(1,3)]));
+        for($ct=0; $ct < $qnt; $ct++){
+            array_push($quest,$this->crtArrayOps($ct, $oper[rand(1,4)]));
         }        
         return $quest;
     }
-    function crtArrayOps($ct, $operation){
-        $valueA = rand(1,100);
-        $valueB = rand(1,100);
+    function crtArrayOps(int $ct,string $operation){
+        $valueA = $this->valueGenerator();
+        $valueB = $this->valueGenerator();
         switch($operation){
             case "+":
                 $operationName = "Addition";
@@ -38,6 +66,10 @@ class CreatOp{
             break;
             case "/":
                 $operationName = "Division";
+                while (($valueA%$valueB) != 0){
+                    $valueA = rand(1,10);
+                    $valueB = rand(1,10);
+                }
                 $result = $this->calcDivision($valueA,$valueB);
             break;
         };
@@ -54,22 +86,22 @@ class CreatOp{
             return $questa;
     }
 
-    function calcAddition($vA, $vB){
+    //Faz os Cálculos
+    private function calcAddition($vA, $vB){
         $opA = $vA + $vB;
         return $this->grOptions($opA,0);    
-    }
-    
-    function calcSubtraction($vA, $vB){
+    }    
+    private function calcSubtraction($vA, $vB){
          $opA = $vA - $vB;
         return $this->grOptions($opA,0);        
     }
-    function calcMultiplication($vA, $vB){
+    private function calcMultiplication($vA, $vB){
         $opA = $vA * $vB;
         return $this->grOptions($opA,0);   
     }
-    function calcDivision($vA,$vB){
+    private function calcDivision($vA,$vB){
         $opA = $vA / $vB;
-        return $this->grOptions($opA,2);   
+        return $this->grOptions($opA,0);   
     }
 
     private function grOptions($opA,$csD){
