@@ -1,41 +1,70 @@
 <?php
-class CreatOp{
+
+namespace Tools;
+
+class CreateOp{
     //Variable
     private $intervaloA;
     private $intervaloB;
 
     //Constructor
-    function CreatOp(int $inta, int $intab){
+    function CreateOp(int $inta, int $intab)
+    {
         $this->intervaloA = $inta;
+        
         $this->intervaloB = $intab;
     }
 
+    function getIntervaloA(){
+        return $this->intervaloA;
+    }
+    function getIntervaloB(){
+        return $this->intervaloB;
+    }
+
+    
+
     //Generates the values 
-    function valueGenerator(){
+    private function valueGenerator()
+    {
         $val = rand($this->intervaloA, $this->intervaloB);
+
         return $val;
     }
     // Recebe a quantidade de equações e a opeção, e retorna um array.
-    function createOperetionUnic(int $qnt, string $operation){
+    function createOperetionUnic(int $qnt, string $operation)
+    {
         $quest = array();
+
         for($ct=0; $ct < $qnt; $ct++){
+
             array_push($quest,$this->crtArrayOps($ct, $operation));
-        }        
+
+        }
+
         return $quest;
     }
     //Gera com especificações
-    function createdFromAnArray(array $conf){
+    function createdFromAnArray(array $conf)
+    {
         $quest = array();
+
         $ctn = 0;
+
         foreach ($conf as $operation => $qnt){
+
             for($a=0; $a < $qnt; $a++){
+
                 array_push($quest, $this->crtArrayOps($ctn,"$operation"));
+
             }
         }
+
         return $quest;
     }
     //Gera com todas as operações.
-    function creatEverEqual(int $qnt){
+    function creatEverEqual(int $qnt)
+    {
         $oper = array(
             1 => "+",
             2 => "-",
@@ -67,8 +96,8 @@ class CreatOp{
             case "/":
                 $operationName = "Division";
                 while (($valueA%$valueB) != 0){
-                    $valueA = rand(1,10);
-                    $valueB = rand(1,10);
+                    $valueA = $this->valueGenerator();
+                    $valueB = $this->valueGenerator();
                 }
                 $result = $this->calcDivision($valueA,$valueB);
             break;

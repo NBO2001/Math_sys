@@ -1,0 +1,26 @@
+{
+    "name": "natan/math_sys",
+    "description": "Eleborado para ensinar math for kids",
+    "type": "library",
+    "authors": [
+        {
+            "name": "NBO2001",
+            "email": "natanbezerr63@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.3.0",
+        "twig/twig": "^3.3"
+    },
+    "autoload": {
+        "psr-0": {
+            "CreateOp": "src/",
+            "MontHtml": "src/"
+        },
+        "psr-4": {
+            "Tools\\": "app/src/",
+            "Control\\": "app/controller/",
+            "Core\\": "app/core/"
+        }
+    }
+}

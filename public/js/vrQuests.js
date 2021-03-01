@@ -21,3 +21,7 @@ function ctnResu(){
     document.getElementById("result").innerHTML = hitsCtn + " / " + totalQts;
     window.scrollTo(0, 0);
 }
+
+function btnIni(){
+        window.location='formulario';
+}
