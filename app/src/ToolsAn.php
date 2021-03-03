@@ -18,15 +18,20 @@ class ToolsAn{
     static function filtArray(array $arr)
     {
         $arr = array_filter($arr);
-
-        $rt = array();
-
-        foreach($arr as $arrayValue)
+        if(count($arr))
         {
-            array_push($rt, $arrayValue);
+            $rt = array();
+
+            foreach($arr as $arrayValue)
+            {
+                array_push($rt, $arrayValue);
+            }
+    
+            return $rt;
+        }else{
+            return false;
         }
 
-        return $rt;
     }
 
     static function post(string $field)
