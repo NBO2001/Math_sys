@@ -1,180 +1,136 @@
 <?php
+declare(strict_types=1);
 
 namespace Core;
 
-class RouteCore{
-    //Variables
+class RouteCore
+{
+    private string $method;
+    private array $uri = [];
+    private array $routes = [];
 
-    private $method;
-    private $uri;
-    private $arrGet;
-
-    function __construct()
+    public function __construct()
     {
-        require_once "../app/config/config.php";
-
         $this->initialize();
-
-        require_once HOME."/app/config/Routes.php";
-
+        require HOME . '/app/config/Routes.php';
         $this->execute();
-        
     }
 
-    function initialize()
+    private function initialize(): void
     {
-        $this->method = $_SERVER['REQUEST_METHOD'];
-
-        $uri = $this->prepareUri($_SERVER['REQUEST_URI']);
-
-        $this->uri = $uri;
-       
+        $this->method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $this->uri = $this->prepareUri($_SERVER['REQUEST_URI'] ?? '/');
     }
 
-    function get($path, $call)
+    public function get(string $path, callable|string $call): void
     {
-        
-        $this->arrGet[] =  [
+        $this->routes[] = [
             'Route' => $path,
-            'Call'  => $call
-        ];
-        
-    }
-
-    function post($path, $call)
-    {
-        $this->arrGet[] =  [
-            'Route' => $path,
-            'Call'  => $call
+            'Call'  => $call,
         ];
     }
 
-    function execute()
+    public function post(string $path, callable|string $call): void
     {
-        switch($this->method)
-        {
-            case "GET":
-                $this->exeGet();
-                break;
-
-            case "POST":
-                $this->exePost();
-                break;
-        } 
+        $this->routes[] = [
+            'Route' => $path,
+            'Call'  => $call,
+        ];
     }
 
-    function exePost()
+    private function execute(): void
     {
-        $in = $this->searchRoute();
-
-        if($in != -1)
-        {
-            $funcCall =  $this->arrGet[$in];
-            
-                if(is_callable($funcCall['Call'])):
-
-                    $funcCall['Call']();
-
-                else:
-                    
-                    $this->searchMethod($funcCall['Call']);
-                    
-            endif;
-
+        if ($this->method === 'POST') {
+            $this->exePost();
+            return;
         }
-        else
-        {
-            echo "error";
+
+        $this->exeGet();
+    }
+
+    private function exePost(): void
+    {
+        $index = $this->searchRoute();
+        if ($index === -1) {
+            echo 'error';
+            return;
+        }
+
+        $funcCall = $this->routes[$index];
+        if (is_callable($funcCall['Call'])) {
+            ($funcCall['Call'])();
+        } else {
+            $this->searchMethod($funcCall['Call']);
         }
     }
 
-    function exeGet(){
-        $in = $this->searchRoute();
+    private function exeGet(): void
+    {
+        $index = $this->searchRoute();
 
-        if($in != -1)
-        {
-            $funcCall =  $this->arrGet[$in];
-            
-                if(is_callable($funcCall['Call'])):
-                    $funcCall['Call']();
-                else:
-                    
-                    $this->searchMethod($funcCall['Call']);
-
-            endif;
-
+        if ($index === -1) {
+            $this->searchMethod('ErrorsController@pgNotFound');
+            return;
         }
-        else
-        {
-            //ErrorsController@pgNotFound
-           $this->searchMethod('ErrorsController@pgNotFound');
+
+        $funcCall = $this->routes[$index];
+        if (is_callable($funcCall['Call'])) {
+            ($funcCall['Call'])();
+        } else {
+            $this->searchMethod($funcCall['Call']);
         }
     }
 
     /**
-     * Method que procura a função
+     * Procura o método correspondente.
      */
-    function searchMethod(string $call)
+    private function searchMethod(string $call): void
     {
-
         $funcCall = explode('@', $call);
-
-        if(!isset($funcCall[0])):echo "erro";elseif(!isset($funcCall[1])):echo "erro";endif;
-
-        $control = 'Control\\'.$funcCall[0];
-
-        if(class_exists($control))
-        {
-
-            if(method_exists($control, $funcCall[1])){
-                call_user_func_array([
-                    new $control,
-                    $funcCall[1]
-                    ],[]);
-
-            }
-            else
-            {
-                echo "Method not is exit!";
-            }
-
-        }
-        else
-        {
-            echo "Class not is exist";
+        if (!isset($funcCall[0], $funcCall[1])) {
+            echo 'erro';
+            return;
         }
 
+        $control = 'Control\\' . $funcCall[0];
+        if (!class_exists($control)) {
+            echo 'Class not exists';
+            return;
+        }
+
+        if (!method_exists($control, $funcCall[1])) {
+            echo 'Method not exists!';
+            return;
+        }
+
+        call_user_func([new $control(), $funcCall[1]]);
     }
 
-    function searchRoute()
+    private function searchRoute(): int
     {
         $i = 0;
-        $in = -1;
+        $index = -1;
 
-        foreach($this->arrGet as $arr)
-        {
+        foreach ($this->routes as $arr) {
             $routes = $this->prepareUri($arr['Route']);
-            $uri = $this->uri;
-            $route = implode('/',$routes);
-            $uri = implode('/',$uri);
+            $route = implode('/', $routes);
+            $uri = implode('/', $this->uri);
 
-            if($route == $uri)
-            {
-                $in = $i;
-
-             }
-            
-             $i++;
+            if ($route === $uri) {
+                $index = $i;
+            }
+            $i++;
         }
-        return $in;
+
+        return $index;
     }
 
-    function prepareUri($uri)
+    private function prepareUri(string $uri): array
     {
-        $uri = array_filter(explode('/',$uri));
-
-        if(count($uri) == 0):$uri = array_filter(explode('/','/home'));endif;
-
+        $uri = array_filter(explode('/', $uri));
+        if (count($uri) === 0) {
+            $uri = array_filter(explode('/', '/home'));
+        }
         return $uri;
     }
 }
