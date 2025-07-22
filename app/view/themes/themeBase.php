@@ -16,6 +16,12 @@
 <body>
     {% block bory %}
     {% endblock %}
+    <div id="modal-overlay" onclick="hideModal()">
+        <div id="modal-content" onclick="event.stopPropagation();">
+            <div id="modal-message"></div>
+            <button onclick="hideModal()">OK</button>
+        </div>
+    </div>
 </body>
 
     {% block javasc %}
