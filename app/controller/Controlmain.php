@@ -27,13 +27,14 @@ class Controlmain extends Controller
             }
 
             $v3 = ToolsAn::filtArray(ToolsAn::post('quant'));
-            if ($v3 === false) {
+            if (!$v3) {
                 $v3 = [10];
             }
 
+
             $v4 = ToolsAn::filtArray(ToolsAn::post('operation'));
 
-            $quest = new CreateOp($ctnA, $ctnB);
+            $quest = new CreateOp((int)$ctnA, (int)$ctnB);
 
             if (!$v4) {
                 if (isset($v3[0])) {

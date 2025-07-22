@@ -12,7 +12,7 @@ class ToolsAn
         echo '</pre>';
     }
 
-    public static function filtArray(array $arr): array|false
+    public static function filtArray(array $arr): array
     {
         $arr = array_filter($arr);
         if (count($arr)) {
@@ -22,14 +22,13 @@ class ToolsAn
             }
             return $rt;
         }
-        return false;
+        return [];
     }
 
-    public static function post(string $field): array|string|false
-    {
-        $value = filter_input(INPUT_POST, $field, FILTER_DEFAULT);
-        return $value !== null ? $value : false;
+    public static function post($key) {
+        return $_POST[$key] ?? null;
     }
+    
     private function verifyPrexi(string $prefix, int|string $val): int|string|false
     {
         $prefix = explode(':', $prefix);
