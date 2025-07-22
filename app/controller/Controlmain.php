@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Control;
 
@@ -7,73 +8,55 @@ use Tools\CreateOp;
 use Tools\MontHtml;
 use Tools\ToolsAn;
 
-
 class Controlmain extends Controller
 {
-    
-    function formGenerete()
+    public function formGenerete(): void
     {
-        if(ToolsAn::post('todosAleatory'))
-        {
+        if (ToolsAn::post('todosAleatory') !== false) {
+            $vd  = new ToolsAn();
+            $vd2 = new ToolsAn();
 
-            $vd = new ToolsAn;
-            
-            $vd2 = new ToolsAn;
+            $ctnA = $vd->validate('quantA', 'number', 'min:1');
+            $ctnB = $vd2->validate('quantB', 'number', 'min:2');
 
-            $ctnA =  $vd->validate('quantA','number','min:1');
+            if ($ctnA === false) {
+                $ctnA = 1;
+            }
+            if ($ctnB === false) {
+                $ctnB = 900;
+            }
 
-            $ctnB =  $vd2->validate('quantB','number','min:2');
-
-            if($ctnA == false): $ctnA = 1;endif;
-
-            if($ctnB == false): $ctnB = 900;endif;
-            
             $v3 = ToolsAn::filtArray(ToolsAn::post('quant'));
-            
-            if($v3 == false): $v3=10;endif;
+            if ($v3 === false) {
+                $v3 = [10];
+            }
 
             $v4 = ToolsAn::filtArray(ToolsAn::post('operation'));
-            
-            $quest = new CreateOp();
 
-            $quest->CreateOp($ctnA,$ctnB);
-            
-            if(!$v4):
+            $quest = new CreateOp($ctnA, $ctnB);
 
-                if(isset($v3[0])): $v3 = $v3[0];endif;
-               
-                $resta = $quest->creatEverEqual($v3);
-
-                // ToolsAn::dd($resta);
-            elseif(count($v4) == 1 and count($v3) == 1):
-
-                $resta = $quest->createOperetionUnic($v3[0],$v4[0]);
-
-            else:
-
-                $temp = array();
-
-                for($i=0; $i < count($v4); $i++)
-                {
-                    array_push($temp[$v4[$i]]);
-
-                    $temp[$v4[$i]] = $v3[$i];
-
+            if (!$v4) {
+                if (isset($v3[0])) {
+                    $v3 = $v3[0];
                 }
-
+                $resta = $quest->creatEverEqual((int)$v3);
+            } elseif (count($v4) === 1 && count($v3) === 1) {
+                $resta = $quest->createOperetionUnic((int)$v3[0], (string)$v4[0]);
+            } else {
+                $temp = [];
+                for ($i = 0; $i < count($v4); $i++) {
+                    $temp[$v4[$i]] = $v3[$i];
+                }
                 $resta = $quest->createdFromAnArray($temp);
-
-            endif;
-
+            }
         }
 
-        $htm = new MontHtml;
-        $html = $htm->mountHtml($resta);
-        $env = array(
-            "contets" => $html
-        );
+        $htm  = new MontHtml();
+        $html = $htm->mountHtml($resta ?? []);
+        $env  = [
+            'contets' => $html,
+        ];
 
-        echo $this->load('pgQuests',$env);
-        
+        echo $this->load('pgQuests', $env);
     }
 }

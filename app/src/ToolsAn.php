@@ -1,105 +1,65 @@
 <?php
+declare(strict_types=1);
 
 namespace Tools;
 
-class ToolsAn{
-
-    function dd(array $arr)
+class ToolsAn
+{
+    public function dd(array $arr): void
     {
-    
-    echo "<pre>";
-
-    print_r($arr);
-
-    echo "</pre>";
-    
+        echo '<pre>';
+        print_r($arr);
+        echo '</pre>';
     }
 
-    static function filtArray(array $arr)
+    public static function filtArray(array $arr): array|false
     {
         $arr = array_filter($arr);
-        if(count($arr))
-        {
-            $rt = array();
-
-            foreach($arr as $arrayValue)
-            {
-                array_push($rt, $arrayValue);
+        if (count($arr)) {
+            $rt = [];
+            foreach ($arr as $arrayValue) {
+                $rt[] = $arrayValue;
             }
-    
             return $rt;
-        }else{
-            return false;
         }
-
+        return false;
     }
 
-    static function post(string $field)
+    public static function post(string $field): array|string|false
     {
-        if(isset($_POST[$field]))
-        {
-            return $_POST[$field];
-        }
-        else
-        {
-            return false;
-        }
+        $value = filter_input(INPUT_POST, $field, FILTER_DEFAULT);
+        return $value !== null ? $value : false;
     }
-    private function verifyPrexi(string $prefix, $val)
+    private function verifyPrexi(string $prefix, int|string $val): int|string|false
     {
-        $prefix = explode(":",$prefix);
-  
-        switch($prefix[0])
-        {
-  
-           case "min":
-  
-              if($prefix[1] != 'null')
-              {
-  
-                 $val = ($val >= $prefix[1])?$val:false;
-  
-                 return $val;
-  
-              }
-  
-              else
-              {
-  
-                 return $val;
-  
-              }
-  
-              break;
-        }
-    }
-
-    function validate(string $field,string $type, string $qt = "min:null")
-    {
-       
-        $val = $this->post($field);
-        if($val != false)
-        {
-          switch($type)
-           {
-              case "number":
-  
-                $val =preg_replace('/[^0-9]/','',$val);
-                if(($this->verifyPrexi($qt,$val)) != false)
-                {
-  
-                 return $val;
-  
+        $prefix = explode(':', $prefix);
+        switch ($prefix[0]) {
+            case 'min':
+                if ($prefix[1] !== 'null') {
+                    $val = ($val >= $prefix[1]) ? $val : false;
+                    return $val;
                 }
-                else
-                {
-  
-                   return false;
-  
-                }            
-              break;
-           }
+
+                return $val;
         }
+
+        return false;
+    }
+
+    public function validate(string $field, string $type, string $qt = 'min:null'): int|string|false
+    {
+        $val = self::post($field);
+        if ($val === false) {
+            return false;
+        }
+
+        switch ($type) {
+            case 'number':
+                $val = preg_replace('/[^0-9]/', '', (string)$val);
+                return $this->verifyPrexi($qt, $val);
+        }
+
+        return false;
     }
 
 }

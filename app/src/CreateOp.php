@@ -1,83 +1,78 @@
 <?php
+declare(strict_types=1);
 
 namespace Tools;
 
-class CreateOp{
-    //Variable
-    private $intervaloA;
-    private $intervaloB;
+class CreateOp
+{
+    private int $intervaloA;
+    private int $intervaloB;
 
-    //Constructor
-    function CreateOp(int $inta, int $intab)
+    public function __construct(int $inta, int $intab)
     {
         $this->intervaloA = $inta;
-        
         $this->intervaloB = $intab;
     }
 
-    function getIntervaloA(){
+    public function getIntervaloA(): int
+    {
         return $this->intervaloA;
     }
-    function getIntervaloB(){
+
+    public function getIntervaloB(): int
+    {
         return $this->intervaloB;
     }
 
     
 
-    //Generates the values 
-    private function valueGenerator()
+    //Generates the values
+    private function valueGenerator(): int
     {
-        $val = rand($this->intervaloA, $this->intervaloB);
-
-        return $val;
+        return rand($this->intervaloA, $this->intervaloB);
     }
-    // Recebe a quantidade de equações e a opeção, e retorna um array.
-    function createOperetionUnic(int $qnt, string $operation)
+
+    // Recebe a quantidade de equações e a operação, e retorna um array.
+    public function createOperetionUnic(int $qnt, string $operation): array
     {
-        $quest = array();
-
-        for($ct=0; $ct < $qnt; $ct++){
-
-            array_push($quest,$this->crtArrayOps($ct, $operation));
-
+        $quest = [];
+        for ($ct = 0; $ct < $qnt; $ct++) {
+            $quest[] = $this->crtArrayOps($ct, $operation);
         }
-
         return $quest;
     }
+
     //Gera com especificações
-    function createdFromAnArray(array $conf)
+    public function createdFromAnArray(array $conf): array
     {
-        $quest = array();
-
+        $quest = [];
         $ctn = 0;
-
-        foreach ($conf as $operation => $qnt){
-
-            for($a=0; $a < $qnt; $a++){
-
-                array_push($quest, $this->crtArrayOps($ctn,"$operation"));
-
+        foreach ($conf as $operation => $qnt) {
+            for ($a = 0; $a < $qnt; $a++) {
+                $quest[] = $this->crtArrayOps($ctn, (string)$operation);
             }
         }
+        return $quest;
+    }
 
-        return $quest;
-    }
     //Gera com todas as operações.
-    function creatEverEqual(int $qnt)
+    public function creatEverEqual(int $qnt): array
     {
-        $oper = array(
-            1 => "+",
-            2 => "-",
-            3 => "*",
-            4 => "/"
-        );
-        $quest = array();
-        for($ct=0; $ct < $qnt; $ct++){
-            array_push($quest,$this->crtArrayOps($ct, $oper[rand(1,4)]));
-        }        
+        $oper = [
+            1 => '+',
+            2 => '-',
+            3 => '*',
+            4 => '/',
+        ];
+        $quest = [];
+        for ($ct = 0; $ct < $qnt; $ct++) {
+            $quest[] = $this->crtArrayOps($ct, $oper[rand(1, 4)]);
+        }
         return $quest;
     }
-    function crtArrayOps(int $ct,string $operation){
+
+    public function crtArrayOps(int $ct, string $operation): array
+    {
         $valueA = $this->valueGenerator();
         $valueB = $this->valueGenerator();
         switch($operation){
@@ -116,25 +111,33 @@ class CreateOp{
     }
 
     //Faz os Cálculos
-    private function calcAddition($vA, $vB){
+    private function calcAddition(int|float $vA, int|float $vB): array
+    {
         $opA = $vA + $vB;
-        return $this->grOptions($opA,0);    
-    }    
-    private function calcSubtraction($vA, $vB){
-         $opA = $vA - $vB;
-        return $this->grOptions($opA,0);        
-    }
-    private function calcMultiplication($vA, $vB){
-        $opA = $vA * $vB;
-        return $this->grOptions($opA,0);   
-    }
-    private function calcDivision($vA,$vB){
-        $opA = $vA / $vB;
-        return $this->grOptions($opA,0);   
+        return $this->grOptions($opA, 0);
     }
 
-    private function grOptions($opA,$csD){
-        $op = rand (1,4);
+    private function calcSubtraction(int|float $vA, int|float $vB): array
+    {
+        $opA = $vA - $vB;
+        return $this->grOptions($opA, 0);
+    }
+
+    private function calcMultiplication(int|float $vA, int|float $vB): array
+    {
+        $opA = $vA * $vB;
+        return $this->grOptions($opA, 0);
+    }
+
+    private function calcDivision(int|float $vA, int|float $vB): array
+    {
+        $opA = $vA / $vB;
+        return $this->grOptions($opA, 0);
+    }
+
+    private function grOptions(float $opA, int $csD): array
+    {
+        $op = rand(1, 4);
         switch($op){
             case 1:
                 $opB = $opA + rand(2,5);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Control;
 
@@ -6,8 +7,8 @@ use Core\Controller;
 
 class ErrorsController extends Controller
 {
-    function pgNotFound(){
-        // echo "oii";
+    public function pgNotFound(): void
+    {
         echo $this->load('msgErro');
     }
 }
