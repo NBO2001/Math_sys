@@ -122,10 +122,34 @@ footer{
 } 
 #btnsIndex{
     background: linear-gradient(217deg, #e2e2bc,#e6e699,#d1d07f);
-  
+
     padding: 0.5rem;
     min-width: 80%;
     border-radius: 10px;
     max-width: 100%;
     font-size: 1.5rem;
+}
+
+#modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+#modal-overlay.show {
+    display: flex;
+}
+
+#modal-content {
+    background: #fff;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    text-align: center;
 }
