@@ -25,9 +25,6 @@ function vrQ(id, name, expected){
             rgErros.push(id);
             correctEl.style.background = "#55fa7e";
             selectedEl.style.background = "#fa467c";
-            var equation = document.querySelectorAll('.uniQ')[id].querySelector('p').innerText;
-            var message = "Você errou.<br>" + equation + " = " + correctEl.innerText + "<br>Sua resposta: " + selectedEl.innerText;
-            showModal(message);
         }
     }
 }
